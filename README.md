@@ -1,4 +1,4 @@
-# Linux Capture Studio 0.6.28 RC10
+# Linux Capture Studio 0.6.30
 
 A native GTK4 and GStreamer capture, lossless recording, and HDR studio for Linux.
 
@@ -29,7 +29,7 @@ Linux Capture Studio is a native GTK4/GStreamer capture application for Linux. I
 
 ## One application, one launcher
 
-V0.6.28 keeps native-resolution HDR60, fixes the KDE Apply crash, and adds a three-step console-style HDR calibration wizard. Start the studio only with:
+V0.6.30 keeps native-resolution HDR60, fixes the KDE Apply crash, and adds a three-step console-style HDR calibration wizard. Start the studio only with:
 
 ```bash
 ./scripts/run-linux-capture-studio.sh

@@ -1,6 +1,6 @@
 # HDR calibration
 
-Linux Capture Studio 0.6.30 RC12 includes a guided three-step calibration workflow modeled after console HDR setup screens. It calibrates the software preview tone mapper and never modifies captured or recorded HDR samples.
+Linux Capture Studio 0.6.30 includes a guided three-step calibration workflow modeled after console HDR setup screens. It calibrates the software preview tone mapper and never modifies captured or recorded HDR samples.
 
 ## Steps
 

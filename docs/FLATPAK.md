@@ -12,13 +12,13 @@ sudo dnf install flatpak flatpak-builder
 The script creates:
 
 ```text
-Linux-Capture-Studio-0.6.30-RC12.flatpak
+Linux-Capture-Studio-0.6.30.flatpak
 ```
 
 Install and run it:
 
 ```bash
-flatpak install --user --reinstall ./Linux-Capture-Studio-0.6.30-RC12.flatpak
+flatpak install --user --reinstall ./Linux-Capture-Studio-0.6.30.flatpak
 flatpak run io.github.linuxcapturestudio.LinuxCaptureStudio
 ```
 

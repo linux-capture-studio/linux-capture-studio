@@ -6,7 +6,7 @@ body:
     id: version
     attributes:
       label: Version
-      placeholder: 0.6.30-rc.12
+      placeholder: 0.6.30
     validations:
       required: true
   - type: input

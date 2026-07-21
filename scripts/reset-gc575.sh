@@ -29,7 +29,7 @@ fi
 
 if [[ -r "$SOURCE_HELPER" ]] && ! cmp -s "$SOURCE_HELPER" "$HELPER"; then
     echo "Linux Capture Studio: the installed GC575 reset helper is outdated." >&2
-    echo "Install the RC12 helper once before switching to native 4K:" >&2
+    echo "Install the 0.6.30 helper once before switching to native 4K:" >&2
     echo "  $ROOT_DIR/scripts/install-passwordless-reset.sh" >&2
     exit 126
 fi

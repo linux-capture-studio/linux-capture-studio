@@ -6,7 +6,7 @@ MANIFEST="$ROOT_DIR/$APP_ID.yml"
 WORK_HOME="${XDG_CACHE_HOME:-$HOME/.cache}/linux-capture-studio-flatpak"
 BUILD_DIR="$WORK_HOME/build"
 REPO_DIR="$WORK_HOME/repo"
-BUNDLE="$ROOT_DIR/Linux-Capture-Studio-0.6.30-RC12.flatpak"
+BUNDLE="$ROOT_DIR/Linux-Capture-Studio-0.6.30.flatpak"
 
 if ! command -v flatpak >/dev/null 2>&1 || ! command -v flatpak-builder >/dev/null 2>&1; then
     echo "Install the Flatpak build tools first:"

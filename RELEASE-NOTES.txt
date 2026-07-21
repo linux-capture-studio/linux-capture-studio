@@ -1,8 +1,8 @@
-Linux Capture Studio 0.6.30 RC12
+Linux Capture Studio 0.6.30
 
 Verified rollback and live HDR preview updates
 
-RC12 fixes the failure shown after a native 4K or 1440p mode change: GStreamer
+Version 0.6.30 fixes the failure shown after a native 4K or 1440p mode change: GStreamer
 could report PLAYING before the GC575 completed asynchronous V4L2 negotiation.
 The previous release treated that provisional state as a successful rollback,
 removed the Apply overlay, and then received a delayed TRY_FMT I/O error. The

@@ -6990,8 +6990,8 @@ on_activate(GtkApplication *gtk_app, gpointer user_data)
     gtk_window_set_title(
         GTK_WINDOW(app->window),
         app->native_p010_session
-            ? "Linux Capture Studio 0.6.30 RC12 — Native HDR60"
-            : "Linux Capture Studio 0.6.30 RC12"
+            ? "Linux Capture Studio 0.6.30 — Native HDR60"
+            : "Linux Capture Studio 0.6.30"
     );
     gtk_window_set_default_size(GTK_WINDOW(app->window), 1440, 900);
 

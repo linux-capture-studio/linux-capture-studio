@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.6.30 RC12
+## 0.6.30
 
 - Fixes the false rollback success shown when a rejected GC575 mode entered provisional GStreamer `PLAYING` but never delivered a real frame.
 - Rollback now remains in progress until the restored pipeline produces at least ten frames over 0.3 seconds; asynchronous `TRY_FMT` failures can no longer be reported as a successful restore.
