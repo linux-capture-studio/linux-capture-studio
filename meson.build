@@ -22,8 +22,8 @@ install_data(
   install_dir: get_option('datadir') / 'metainfo'
 )
 install_data(
-  'packaging/io.github.linuxcapturestudio.LinuxCaptureStudio.svg',
-  install_dir: get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps'
+  'packaging/io.github.linuxcapturestudio.LinuxCaptureStudio.png',
+  install_dir: get_option('datadir') / 'icons' / 'hicolor' / '512x512' / 'apps'
 )
 install_data(
   'scripts/run-flatpak.sh',

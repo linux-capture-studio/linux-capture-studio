@@ -1,8 +1,28 @@
 # Linux Capture Studio 0.6.30
 
-A native GTK4 and GStreamer capture, lossless recording, and HDR studio for Linux.
+<p align="center">
+  <img src="docs/images/linux-capture-studio-logo.png" width="180" alt="Linux Capture Studio logo">
+</p>
 
-> Release-candidate status: the capture engine is based on the working 0.6.18 baseline. Elgato and generic UVC support remain experimental.
+<p align="center"><strong>Native GTK4/GStreamer capture, HDR preview, and lossless recording for Linux.</strong></p>
+
+<p align="center">
+  <img src="docs/images/capture-demo.gif" alt="Linux Capture Studio capture demonstration">
+</p>
+
+## Screenshots
+
+### Main capture window
+
+![Linux Capture Studio main capture window](docs/images/main-window.png)
+
+| Session selection | Connected device |
+|---|---|
+| ![Native capture session selector](docs/images/session-selector.png) | ![Connected capture device settings](docs/images/device-settings.png) |
+
+| Recording | Image and HDR | Sound |
+|---|---|---|
+| ![Recording settings](docs/images/recording-settings.png) | ![Image and HDR settings](docs/images/hdr-settings.png) | ![Sound settings](docs/images/audio-settings.png) |
 
 ## Quick start
 

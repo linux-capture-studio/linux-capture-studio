@@ -39,7 +39,6 @@ cp -f "$ROOT_DIR/packaging/io.github.linuxcapturestudio.LinuxCaptureStudio.deskt
     "$DESKTOP_HOME/io.github.linuxcapturestudio.LinuxCaptureStudio.desktop"
 cp -f "$ROOT_DIR/packaging/io.github.linuxcapturestudio.LinuxCaptureStudio.metainfo.xml" \
     "$METAINFO_HOME/io.github.linuxcapturestudio.LinuxCaptureStudio.metainfo.xml"
-
 cp -f "$ROOT_DIR/packaging/io.github.linuxcapturestudio.LinuxCaptureStudio.png" \
     "$ICON_HOME/io.github.linuxcapturestudio.LinuxCaptureStudio.png"
 

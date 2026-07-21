@@ -6945,6 +6945,11 @@ static void
 on_activate(GtkApplication *gtk_app, gpointer user_data)
 {
     OpenCentralApp *app = user_data;
+    GtkWidget *startup_window;
+    GtkWidget *startup_box;
+    GtkWidget *startup_spinner;
+    GtkWidget *startup_label;
+    GtkWidget *startup_detail;
     GtkWidget *header_row;
     GtkWidget *brand_box;
     GtkWidget *brand_icon_tile;
@@ -6986,6 +6991,39 @@ on_activate(GtkApplication *gtk_app, gpointer user_data)
 
     app->gtk_app = gtk_app;
     install_ui_css();
+
+    startup_window = gtk_application_window_new(gtk_app);
+    gtk_window_set_title(GTK_WINDOW(startup_window), "Linux Capture Studio");
+    gtk_window_set_default_size(GTK_WINDOW(startup_window), 460, 190);
+    gtk_window_set_resizable(GTK_WINDOW(startup_window), FALSE);
+
+    startup_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 14);
+    gtk_widget_set_halign(startup_box, GTK_ALIGN_CENTER);
+    gtk_widget_set_valign(startup_box, GTK_ALIGN_CENTER);
+    gtk_widget_set_margin_top(startup_box, 28);
+    gtk_widget_set_margin_bottom(startup_box, 28);
+    gtk_widget_set_margin_start(startup_box, 32);
+    gtk_widget_set_margin_end(startup_box, 32);
+
+    startup_spinner = gtk_spinner_new();
+    gtk_widget_set_size_request(startup_spinner, 36, 36);
+    gtk_spinner_start(GTK_SPINNER(startup_spinner));
+    gtk_box_append(GTK_BOX(startup_box), startup_spinner);
+
+    startup_label = gtk_label_new("Please wait…");
+    gtk_widget_add_css_class(startup_label, "title-2");
+    gtk_box_append(GTK_BOX(startup_box), startup_label);
+
+    startup_detail = gtk_label_new("Starting Linux Capture Studio and preparing the capture device.");
+    gtk_label_set_wrap(GTK_LABEL(startup_detail), TRUE);
+    gtk_label_set_justify(GTK_LABEL(startup_detail), GTK_JUSTIFY_CENTER);
+    gtk_widget_add_css_class(startup_detail, "dim-label");
+    gtk_box_append(GTK_BOX(startup_box), startup_detail);
+
+    gtk_window_set_child(GTK_WINDOW(startup_window), startup_box);
+    gtk_window_present(GTK_WINDOW(startup_window));
+    while (g_main_context_iteration(NULL, FALSE)) { }
+
     app->window = gtk_application_window_new(gtk_app);
     gtk_window_set_title(
         GTK_WINDOW(app->window),
@@ -7857,7 +7895,9 @@ on_activate(GtkApplication *gtk_app, gpointer user_data)
     app->device_watch_timer_id = g_timeout_add_seconds(2, device_watch_tick, app);
 
     gtk_window_present(GTK_WINDOW(app->window));
+    while (g_main_context_iteration(NULL, FALSE)) { }
     if (app->device_connected) build_pipeline(app, FALSE);
+    gtk_window_destroy(GTK_WINDOW(startup_window));
 }
 
 int
