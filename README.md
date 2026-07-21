@@ -41,6 +41,19 @@ Install for the current user without sudo:
 ./scripts/install-user.sh
 ```
 
+## Uninstall
+
+For a per-user installation, run the included uninstaller from the
+Linux Capture Studio source directory:
+
+```bash
+./scripts/uninstall-user.sh
+```
+
+The uninstaller removes the installed application, launcher, desktop
+entry, AppStream metadata, and application icon. It does not require
+`sudo`. Existing profiles and recordings are preserved.
+
 Run release validation:
 
 ```bash
