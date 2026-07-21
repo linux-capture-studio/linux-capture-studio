@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Linux Capture Studio
+Comment=Native Linux video capture and lossless recording studio
+Exec=linux-capture-studio
+Icon=io.github.linuxcapturestudio.LinuxCaptureStudio
+Terminal=false
+Categories=AudioVideo;Recorder;Video;
+Keywords=capture;recording;HDR;UVC;V4L2;
+StartupNotify=true

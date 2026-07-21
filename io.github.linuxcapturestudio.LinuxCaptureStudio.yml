@@ -1,0 +1,34 @@
+id: io.github.linuxcapturestudio.LinuxCaptureStudio
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+command: linux-capture-studio-flatpak
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=dri
+  # Capture-card V4L2 and ALSA nodes are allocated dynamically.
+  - --device=all
+  - --filesystem=xdg-videos
+
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /share/man
+  - '*.a'
+  - '*.la'
+
+modules:
+  - name: linux-capture-studio
+    buildsystem: simple
+    build-commands:
+      - meson setup _flatpak_build --prefix=/app --buildtype=release
+      - meson compile -C _flatpak_build
+      - meson install -C _flatpak_build
+      - install -Dm644 packaging/io.github.linuxcapturestudio.LinuxCaptureStudio.flatpak.desktop /app/share/applications/io.github.linuxcapturestudio.LinuxCaptureStudio.desktop
+    sources:
+      - type: dir
+        path: .

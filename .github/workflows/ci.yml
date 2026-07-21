@@ -1,0 +1,20 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  fedora:
+    runs-on: ubuntu-latest
+    container: fedora:44
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: dnf -y install gcc meson ninja-build pkgconf-pkg-config gtk4-devel gstreamer1-devel bash findutils
+      - name: Configure
+        run: meson setup build
+      - name: Compile
+        run: meson compile -C build
+      - name: Shell syntax
+        run: find scripts -maxdepth 1 -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n

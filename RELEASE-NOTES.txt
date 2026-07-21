@@ -1,0 +1,29 @@
+Linux Capture Studio 0.6.30 RC12
+
+Verified rollback and live HDR preview updates
+
+RC12 fixes the failure shown after a native 4K or 1440p mode change: GStreamer
+could report PLAYING before the GC575 completed asynchronous V4L2 negotiation.
+The previous release treated that provisional state as a successful rollback,
+removed the Apply overlay, and then received a delayed TRY_FMT I/O error. The
+same rejected mode was reopened again.
+
+Rollback now stays active until the restored pipeline delivers at least ten real video frames
+over 0.3 seconds. A pipeline request without frames is never called restored. If the
+previous mode cannot produce a frame after three attempts, the launcher performs
+one controlled GC575 recovery and returns to the proven genuine P010 1080p60
+safety session.
+
+Physical Apply validation is also stronger: a candidate mode must deliver at
+least 30 frames over at least 0.8 seconds before it becomes the new last-good
+mode. The validation timeout is ten seconds.
+
+Native HDR sessions now keep one permanent GL shader stage. HDR preview
+correction, its on/off switch, PQ/HLG selection, and console-style calibration
+replace the shader live behind the existing half-second confirmation overlay.
+They no longer destroy and reopen v4l2src, avoiding unnecessary GC575 TRY_FMT
+failures when the physical resolution and pixel format have not changed.
+
+Native 3840x2160 at 60 FPS, source-aware 8-bit HDR compensation, genuine P010
+handling, the persistent Please Wait transition window, and bounded startup
+recovery remain included.

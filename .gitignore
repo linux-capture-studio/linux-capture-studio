@@ -1,0 +1,56 @@
+# Meson and compiler output
+/build/
+/build-*/
+dist/
+out/
+target/
+*.o
+*.a
+*.so
+*.so.*
+
+# Flatpak build output
+.flatpak-builder/
+repo/
+*.flatpak
+*.flatpakref
+
+# Recordings and captured media
+recordings/
+captures/
+videos/
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.ts
+*.wav
+
+# Logs, crashes, caches, and temporary files
+*.log
+*.core
+core
+core.*
+*.tmp
+*.temp
+*.bak
+*~
+.cache/
+__pycache__/
+*.pyc
+
+# Local settings and secrets
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated release archives
+linux-capture-studio-*.tar.gz

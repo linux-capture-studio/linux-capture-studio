@@ -1,0 +1,29 @@
+name: Bug report
+description: Report a reproducible Linux Capture Studio problem
+title: "[Bug] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 0.6.30-rc.12
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Capture device
+      placeholder: AVerMedia GC575, Elgato HD60 X, or another device
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Remove stream keys, passwords, tokens, and private paths.

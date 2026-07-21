@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+
+# Privileged, root-owned helper for recovering the AVerMedia GC575.
+# It accepts no device path or PCI address from the caller. The controller is
+# discovered from the live 07ca:0575/e575 USB functions or from a root-owned
+# cache created from that discovery.
+
+MODE="${1:-auto}"
+STATE_DIR="/var/lib/linux-capture-studio"
+STATE_FILE="$STATE_DIR/gc575-xhci-bdf"
+
+if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+    echo "ERROR: linux-capture-studio-reset-helper must run as root." >&2
+    exit 126
+fi
+
+case "$MODE" in
+    auto|--soft|--controller|--full) ;;
+    *)
+        echo "Usage: linux-capture-studio-reset-helper [auto|--soft|--controller|--full]" >&2
+        exit 2
+        ;;
+esac
+
+find_usb_device() {
+    local wanted_product="$1"
+    local vendor_file device_dir vendor product
+
+    for vendor_file in /sys/bus/usb/devices/*/idVendor; do
+        [[ -r "$vendor_file" ]] || continue
+        device_dir="${vendor_file%/idVendor}"
+        vendor="$(cat "$vendor_file" 2>/dev/null)"
+        product="$(cat "$device_dir/idProduct" 2>/dev/null)"
+        if [[ "$vendor" == "07ca" && "$product" == "$wanted_product" ]]; then
+            basename "$device_dir"
+            return 0
+        fi
+    done
+    return 1
+}
+
+validate_xhci_bdf() {
+    local bdf="$1"
+    [[ "$bdf" =~ ^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-7]$ ]] || return 1
+    [[ -d "/sys/bus/pci/devices/$bdf" ]] || return 1
+    [[ "$(cat "/sys/bus/pci/devices/$bdf/class" 2>/dev/null)" == "0x0c0330" ]]
+}
+
+find_live_parent_pci_bdf() {
+    local product usb_id path base
+
+    for product in 0575 e575; do
+        usb_id="$(find_usb_device "$product" 2>/dev/null)" || continue
+        path="$(readlink -f "/sys/bus/usb/devices/$usb_id")"
+        while [[ "$path" != "/" && -n "$path" ]]; do
+            base="$(basename "$path")"
+            if validate_xhci_bdf "$base"; then
+                printf '%s\n' "$base"
+                return 0
+            fi
+            path="$(dirname "$path")"
+        done
+    done
+    return 1
+}
+
+remember_controller() {
+    local bdf="$1"
+    validate_xhci_bdf "$bdf" || return 1
+    install -d -m 0755 -o root -g root "$STATE_DIR"
+    printf '%s\n' "$bdf" > "$STATE_FILE"
+    chown root:root "$STATE_FILE"
+    chmod 0600 "$STATE_FILE"
+}
+
+find_parent_pci_bdf() {
+    local bdf
+
+    if bdf="$(find_live_parent_pci_bdf 2>/dev/null)"; then
+        remember_controller "$bdf"
+        printf '%s\n' "$bdf"
+        return 0
+    fi
+
+    if [[ -r "$STATE_FILE" ]]; then
+        bdf="$(tr -d '[:space:]' < "$STATE_FILE")"
+        if validate_xhci_bdf "$bdf"; then
+            printf '%s\n' "$bdf"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+wait_for_gc575() {
+    local i
+    for i in $(seq 1 20); do
+        udevadm settle --timeout=2 2>/dev/null || true
+        if find_usb_device 0575 >/dev/null 2>&1; then
+            sleep 1
+            return 0
+        fi
+        sleep 1
+    done
+    return 1
+}
+
+gc575_node_ready() {
+    local node props vendor model capabilities
+    for node in /dev/video*; do
+        [[ -e "$node" ]] || continue
+        props="$(udevadm info --query=property --name="$node" 2>/dev/null)"
+        vendor="$(sed -n 's/^ID_VENDOR_ID=//p' <<<"$props" | head -n1)"
+        model="$(sed -n 's/^ID_MODEL_ID=//p' <<<"$props" | head -n1)"
+        capabilities="$(sed -n 's/^ID_V4L_CAPABILITIES=//p' <<<"$props" | head -n1)"
+        [[ "$vendor" == "07ca" && "$model" == "0575" ]] || continue
+        if [[ -z "$capabilities" || "$capabilities" == *capture* ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+wait_for_gc575_node() {
+    local i
+    for i in $(seq 1 30); do
+        udevadm settle --timeout=2 2>/dev/null || true
+        gc575_node_ready && return 0
+        sleep 1
+    done
+    return 1
+}
+
+soft_usb_reset() {
+    local usb_id
+    usb_id="$(find_usb_device 0575 2>/dev/null)" || return 1
+
+    echo "Linux Capture Studio: soft-resetting capture video/audio function at $usb_id..."
+    [[ -w /sys/bus/usb/drivers/usb/unbind && -w /sys/bus/usb/drivers/usb/bind ]] || return 1
+    printf '%s' "$usb_id" > /sys/bus/usb/drivers/usb/unbind || return 1
+    sleep 2
+    printf '%s' "$usb_id" > /sys/bus/usb/drivers/usb/bind || return 1
+    wait_for_gc575 && wait_for_gc575_node
+}
+
+controller_reset() {
+    local bdf class driver_path driver_name
+
+    bdf="$(find_parent_pci_bdf)" || {
+        echo "ERROR: Could not identify the dedicated GC575 xHCI controller." >&2
+        echo "Run the one-time setup while the card is healthy so its controller can be cached." >&2
+        return 1
+    }
+
+    class="$(cat "/sys/bus/pci/devices/$bdf/class" 2>/dev/null)"
+    if [[ "$class" != "0x0c0330" ]]; then
+        echo "ERROR: Refusing to reset PCI device $bdf because it is not an xHCI controller." >&2
+        return 1
+    fi
+
+    remember_controller "$bdf"
+    echo "Linux Capture Studio: resetting dedicated capture xHCI controller $bdf..."
+    echo "Linux Capture Studio: capture video, audio, and lighting functions will briefly disappear."
+
+    if [[ -w "/sys/bus/pci/devices/$bdf/reset" ]]; then
+        printf '1' > "/sys/bus/pci/devices/$bdf/reset" || return 1
+    else
+        driver_path="$(readlink -f "/sys/bus/pci/devices/$bdf/driver" 2>/dev/null)"
+        driver_name="$(basename "$driver_path")"
+        if [[ -z "$driver_path" || ! -w "$driver_path/unbind" || ! -w "$driver_path/bind" ]]; then
+            echo "ERROR: PCI reset is unavailable and the controller driver cannot be rebound." >&2
+            return 1
+        fi
+        echo "Linux Capture Studio: rebinding $driver_name..."
+        printf '%s' "$bdf" > "$driver_path/unbind" || return 1
+        sleep 3
+        printf '%s' "$bdf" > "$driver_path/bind" || return 1
+    fi
+
+    if wait_for_gc575 && wait_for_gc575_node; then
+        echo "Linux Capture Studio: capture device returned; the requested mode will be validated by GStreamer."
+        return 0
+    fi
+
+    echo "Linux Capture Studio: first reset did not restore the card; trying PCI remove/rescan..."
+    if [[ -w "/sys/bus/pci/devices/$bdf/remove" && -w /sys/bus/pci/rescan ]]; then
+        printf '1' > "/sys/bus/pci/devices/$bdf/remove" || return 1
+        sleep 3
+        printf '1' > /sys/bus/pci/rescan || return 1
+        if wait_for_gc575 && wait_for_gc575_node; then
+            echo "Linux Capture Studio: capture device returned after PCI rescan; the requested mode will be validated by GStreamer."
+            return 0
+        fi
+    fi
+
+    echo "ERROR: The controller reset completed, but 07ca:0575 did not return." >&2
+    return 1
+}
+
+# The caller has already stopped and released the capture pipeline.  Do not
+# kill GUI processes here: the separate "Please wait" transition window must
+# remain visible while the xHCI controller and GC575 functions disappear.
+
+case "$MODE" in
+    --controller|--full)
+        controller_reset
+        result=$?
+        ;;
+    --soft)
+        soft_usb_reset
+        result=$?
+        ;;
+    auto)
+        if find_usb_device 0575 >/dev/null 2>&1; then
+            soft_usb_reset || controller_reset
+            result=$?
+        else
+            echo "Linux Capture Studio: 07ca:0575 is absent; using controller recovery."
+            controller_reset
+            result=$?
+        fi
+        ;;
+esac
+
+udevadm settle --timeout=15 2>/dev/null || true
+if [[ "$result" -eq 0 ]]; then
+    lsusb -d 07ca:0575 2>/dev/null || true
+fi
+exit "$result"

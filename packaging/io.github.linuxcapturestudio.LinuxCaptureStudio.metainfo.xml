@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.linuxcapturestudio.LinuxCaptureStudio</id>
+  <name>Linux Capture Studio</name>
+  <summary>Native Linux capture, lossless recording, and HDR studio</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>Linux Capture Studio provides a native GTK and GStreamer workflow for compatible V4L2 and UVC capture devices.</p>
+    <p>It includes staged mode changes, lossless recording, independent monitored audio, device profiles, and HDR workflows. YouTube and Twitch integration are marked as coming soon.</p>
+  </description>
+  <launchable type="desktop-id">io.github.linuxcapturestudio.LinuxCaptureStudio.desktop</launchable>
+  <provides>
+    <binary>linux-capture-studio</binary>
+  </provides>
+  <categories>
+    <category>AudioVideo</category>
+    <category>Recorder</category>
+  </categories>
+  <releases>
+    <release version="0.6.30" date="2026-07-21">
+      <description><p>Requires real-frame rollback confirmation and applies HDR preview correction/calibration live without reopening the GC575 transport.</p></description>
+    </release>
+    <release version="0.6.29" date="2026-07-21">
+      <description><p>Persistent GC575 4K transition window, node-only reset helper, and stabilized native 4K MJPEG watchdog.</p></description>
+    </release>
+    <release version="0.6.28" date="2026-07-21">
+      <description>
+        <p>Bounds GC575 startup recovery, commits recovery only after a real frame, and performs one safe 1080p60 fallback instead of retrying a rejected mode indefinitely.</p>
+      </description>
+    </release>
+    <release version="0.6.27" date="2026-07-21">
+      <description><p>Fixes dark HDR previews with source-aware transfer handling: genuine P010 uses PQ/HLG mapping, while native 4K MJPEG and other 8-bit sources use display-referred compensation without an incorrect PQ decode.</p></description>
+    </release>
+    <release version="0.6.26" date="2026-07-21">
+      <description><p>GC575 native 4K transition safety, first-frame Apply validation, complete last-good rollback, console-style HDR calibration, and movable Settings window.</p></description>
+    </release>
+    <release version="0.6.24" date="2026-07-21">
+      <description><p>Built-in HDR preview calibration, movable settings window, and native-resolution HDR60 sessions.</p></description>
+    </release>
+    <release version="0.6.23" date="2026-07-21">
+      <description><p>HDR preview correction, Flatpak packaging, and release-candidate polish.</p></description>
+    </release>
+  </releases>
+</component>
