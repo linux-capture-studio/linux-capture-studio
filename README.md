@@ -6,6 +6,8 @@
 
 <p align="center"><strong>Native GTK4/GStreamer capture, HDR preview, and lossless recording for Linux.</strong></p>
 
+Linux Capture Studio is a native GTK4 video-capture and recording application for Linux. It uses GStreamer and V4L2 and supports capture cards, 4K60 video, HDR, P010, audio controls, fullscreen preview, recording profiles, and automatic capture-device recovery.
+
 <p align="center">
   <img src="docs/images/capture-demo.gif" alt="Linux Capture Studio capture demonstration">
 </p>
@@ -44,8 +46,6 @@ Run release validation:
 ```bash
 ./scripts/release-check.sh
 ```
-
-Linux Capture Studio is a native GTK4/GStreamer capture application for Linux. It uses V4L2, PipeWire/PulseAudio, ALSA, and GStreamer directly—no Wine and no proprietary Windows binaries.
 
 ## One application, one launcher
 
